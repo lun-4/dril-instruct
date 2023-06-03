@@ -15,8 +15,8 @@ def full_prompt_for(seed_prompt, joke: str):
 def process_tweet(api_address, seed_prompt, tweet: dict):
     assert tweet["_type"] == "snscrape.modules.twitter.Tweet"
     log.debug("processing %r", tweet["url"])
-
-    full_prompt = full_prompt_for(seed_prompt, tweet["renderedContent"])
+    dril_tweet = tweet["renderedContent"]
+    full_prompt = full_prompt_for(seed_prompt, dril_tweet)
     log.debug("full prompt: %r", full_prompt)
     request_json = json.dumps(
         {
@@ -32,8 +32,12 @@ def process_tweet(api_address, seed_prompt, tweet: dict):
     req = request.Request(api_address, data=request_json)
     response = request.urlopen(req)
     log.debug("resp: %r", response)
-    data = response.read()
-    log.debug("data: %r", data)
+    data_bytes = response.read()
+    log.debug("data: %r", data_bytes)
+    data = json.loads(data_bytes.decode())
+    output = data["results"][0]["text"]
+    log.debug("output: %r", output)
+    return dril_tweet, output
 
 
 def main():
@@ -54,12 +58,26 @@ def main():
         seed_prompt = fd.read()
 
     api_address = f"{text_generation_webui_address}/api/v1/generate"
+    processed_count = 0
     with dril_tweets_path.open() as fd:
-        for jsonl_data in fd:
-            print(jsonl_data)
+        lines = fd.readlines()
+
+        for jsonl_data in lines:
             tweet = json.loads(jsonl_data)
-            process_tweet(api_address, seed_prompt, tweet)
-            return 0
+            dril_tweet, extrapolated_instruction = process_tweet(
+                api_address, seed_prompt, tweet
+            )
+            processed_count += 1
+
+            log.info("processed %d/%d", processed_count, len(lines))
+
+            instruction_data = {
+                "_type": "pm.l4.dril_instruct.extrapolated_instruction",
+                "input": dril_tweet,
+                "instruction": extrapolated_instruction,
+            }
+
+            print(json.dumps(instruction_data))
 
 
 if __name__ == "__main__":

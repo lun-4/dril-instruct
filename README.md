@@ -27,5 +27,8 @@ python3 ./prepare/self_instruct.py "./files/Dril Instruct many-shot samples - da
 snscrape -vv --progress --jsonl twitter-user dril > tmp/dril.jsonl
 
 # you need text-generation-webui with an instruct model loaded in it
-python3 ./prepare/extrapolate_instructions.py "tmp/prompt.txt" "tmp/dril.jsonl" "http://127.0.0.1:5000"
+python3 ./prepare/extrapolate_instructions.py "tmp/prompt.txt" "tmp/dril.jsonl" "http://127.0.0.1:5000" > tmp/instructiosn.jsonl
+
+# tmp/instructions.jsonl now has a bunch of data that you can finetune with
+# TODO how to finetune vicuna
 ```
