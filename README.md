@@ -5,3 +5,5 @@
 > do this for all dril tweets. you now have a dataset of instruction2dril.
 > finetune a Vicuna model on top of that data, and you can now have a shitpost generator
 
+![drilinstruct](./files/drilinstruct.png)
+
