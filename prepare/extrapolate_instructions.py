@@ -12,6 +12,30 @@ def full_prompt_for(seed_prompt, joke: str):
     return seed_prompt.replace("{{JOKE}}", joke).replace(" {{INSTRUCTION}}", "")
 
 
+def process_tweet(api_address, seed_prompt, tweet: dict):
+    assert tweet["_type"] == "snscrape.modules.twitter.Tweet"
+    log.debug("processing %r", tweet["url"])
+
+    full_prompt = full_prompt_for(seed_prompt, tweet["renderedContent"])
+    log.debug("full prompt: %r", full_prompt)
+    request_json = json.dumps(
+        {
+            # llama-precise.txt
+            "top_p": 0.1,
+            "top_k": 40,
+            "temperature": 0.7,
+            "repetition_penalty": 1.18,
+            "typical_p": 1.0,
+            "prompt": full_prompt,
+        }
+    ).encode()
+    req = request.Request(api_address, data=request_json)
+    response = request.urlopen(req)
+    log.debug("resp: %r", response)
+    data = response.read()
+    log.debug("data: %r", data)
+
+
 def main():
     try:
         seed_prompt_path = Path(sys.argv[1])
@@ -31,15 +55,10 @@ def main():
 
     api_address = f"{text_generation_webui_address}/api/v1/generate"
     with dril_tweets_path.open() as fd:
-        for tweet in fd:
-            full_prompt = full_prompt_for(seed_prompt, tweet)
-            log.debug("full prompt: %r", full_prompt)
-            request_json = json.dumps({"prompt": full_prompt}).encode()
-            req = request.Request(api_address, data=request_json)
-            response = request.urlopen(req)
-            log.debug("resp: %r", response)
-            data = response.read()
-            log.debug("data: %r", data)
+        for jsonl_data in fd:
+            print(jsonl_data)
+            tweet = json.loads(jsonl_data)
+            process_tweet(api_address, seed_prompt, tweet)
             return 0
 
 

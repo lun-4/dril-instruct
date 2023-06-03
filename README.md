@@ -23,9 +23,9 @@ git clone ...
 cd ...
 python3 ./prepare/self_instruct.py "./files/Dril Instruct many-shot samples - data.tsv" > tmp/prompt.txt
 
-# get dril tweets
-# TODO: create process for that
+# dril data!
+snscrape -vv --progress --jsonl twitter-user dril > tmp/dril.jsonl
 
-# you need text-generation-webui with an instruct model in it
-python3 ./prepare/extrapolate_instructions.py "tmp/prompt.txt" "dril.jsonl" "http://127.0.0.1:5000"
+# you need text-generation-webui with an instruct model loaded in it
+python3 ./prepare/extrapolate_instructions.py "tmp/prompt.txt" "tmp/dril.jsonl" "http://127.0.0.1:5000"
 ```
