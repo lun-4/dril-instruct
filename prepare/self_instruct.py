@@ -23,7 +23,9 @@ def main():
                 ]
             )
 
-    self_instruct_prompt_lines.extend(["", "---", "", "Joke:", "Instruction:"])
+    self_instruct_prompt_lines.extend(
+        ["", "---", "", "Joke: {{JOKE}}", "Instruction: {{INSTRUCTION}}"]
+    )
 
     self_instruct_prompt = "\n".join(self_instruct_prompt_lines)
     print(self_instruct_prompt)
