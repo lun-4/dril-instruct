@@ -12,6 +12,12 @@
 
 project state: proof of concept for data preparation, no finetunes made yet
 
+- create a "seed prompt", take some dril tweets and create their respective instructions manually
+  - a TSV file is left in `files/` to create the main seed prompt
+- from the seed prompt, "extrapolate" instructions to all dril tweets using an existing instruction model
+- we now have a dataset of instruction-to-dril-tweet
+- finetune on that, and you get a shitposter (that's the idea)
+
 ```
 git clone ...
 cd ...
