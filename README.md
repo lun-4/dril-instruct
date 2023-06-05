@@ -10,7 +10,7 @@
 
 # how
 
-project state: proof of concept for data preparation, no finetunes made yet
+project state: LoRA was made. results incoming
 
 - create a "seed prompt", take some dril tweets and create their respective instructions manually
   - a TSV file is left in `files/` to create the main seed prompt
@@ -29,6 +29,15 @@ snscrape -vv --progress --jsonl twitter-user dril > tmp/dril.jsonl
 # you need text-generation-webui with an instruct model loaded in it
 python3 ./prepare/extrapolate_instructions.py "tmp/prompt.txt" "tmp/dril.jsonl" "http://127.0.0.1:5000" > tmp/instructiosn.jsonl
 
-# tmp/instructions.jsonl now has a bunch of data that you can finetune with
-# TODO how to finetune vicuna
+# tmp/instructions.jsonl now has a bunch of data that you can finetune with!
+
+# in this example, we'll export to the FastChat format, to finetune a Vicuna model
+python3 ./prepare/convert_to_fastchat.py ./tmp/instructions.jsonl > tmp/fastchat.json
+
+cd ..
+git clone https://github.com/git-cloner/llama-lora-fine-tuning
+cd ..
+# then follow their instructions to get a lora file in its output/
+# my finetune of Vicuna-13b-cocktail was done in INT8 mode, deepspeed zero, and an A100 80GB VRAM
+# (total spent was less than 10USD on RunPod)
 ```
