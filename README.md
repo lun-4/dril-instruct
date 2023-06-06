@@ -4,6 +4,8 @@
 
 read more here: https://l4.pm/wiki/Personal%20Wiki/AI%20stuff/dril-instruct.html
 
+lora file here: https://huggingface.co/lun-4/dril-instruct
+
 > the idea: take dril tweets, ask Vicuna-13b to generate a prompt that would spit out a dril tweet,
 > do this for all dril tweets. you now have a dataset of instruction2dril.
 > finetune a Vicuna model on top of that data, and you can now have a shitpost generator
@@ -13,7 +15,7 @@ read more here: https://l4.pm/wiki/Personal%20Wiki/AI%20stuff/dril-instruct.html
 
 # how
 
-project state: LoRA was made. results incoming
+project state: look at the blogpost! it's finished
 
 - create a "seed prompt", take some dril tweets and create their respective instructions manually
   - a TSV file is left in `files/` to create the main seed prompt
